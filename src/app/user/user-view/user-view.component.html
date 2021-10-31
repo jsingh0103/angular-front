@@ -1,0 +1,11 @@
+<div class="container" style="text-align:center" >
+    <div class="row" *ngIf="current_user">
+
+        <h3>Welcome {{current_user.first_name.charAt(0).toUpperCase()+ current_user.first_name.slice(1)}}</h3>
+            <h4><p>Email: {{current_user.user_email}}</p>
+            <p>Firstname: {{current_user.first_name}}</p>
+            <p>Lastname: {{current_user.last_name}}</p>
+            <p>Age: {{current_user.user_age}}</p></h4>
+            <a class="btn btn-primary" [routerLink]="['/edit',current_user.user_id]">Edit Profile</a>                
+    </div>
+</div>
