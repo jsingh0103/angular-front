@@ -44,6 +44,9 @@ export class AppService {
     let myResponse = this.http.put(this.baseUrl + "/edit/" + user_id, user_info)
     return myResponse
   }
+  public uploadCSV(fileValue:any):any{
+    return this.http.post(this.baseUrl + "/uploadcsv",fileValue)
+  }
 
   public getUserInfo = ()=>{
     return JSON.parse(localStorage.getItem("userInfo")||'{}');

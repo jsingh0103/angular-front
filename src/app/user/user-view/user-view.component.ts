@@ -1,17 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AppService } from 'src/app/app.service';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Cookie } from 'ng2-cookies/ng2-cookies';
+import { CSVRecord } from './CSVModel'; 
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-user-view',
   templateUrl: './user-view.component.html',
   styleUrls: ['./user-view.component.css']
 })
 export class UserViewComponent implements OnInit {
+  public title = 'Angular7-readCSV';  
   public current_user:any;
 
-  constructor(public appService: AppService, public router: Router,public _route: ActivatedRoute) { }
+  constructor(public appService: AppService, public router: Router,public _route: ActivatedRoute,public toastr: ToastrService) { }
 
   ngOnInit(
 
@@ -32,5 +35,89 @@ export class UserViewComponent implements OnInit {
   }
 
   }
+  public records: any[] = [];  
+  @ViewChild('csvReader') csvReader: any;  
+  
+  uploadListener($event: any): void {  
+  
+    let text = [];  
+    let files = $event.srcElement.files;  
+  
+    if (this.isValidCSVFile(files[0])) {  
+  
+      let input = $event.target;  
+      let reader = new FileReader();  
+      reader.readAsText(input.files[0]);  
+  
+      reader.onload = () => {  
+        let csvData = reader.result;  
+        let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);  
+  
+        let headersRow = this.getHeaderArray(csvRecordsArray);  
+  
+        this.records = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow.length);  
+
+        if(this.records.length > 0){
+          this.importFile(this.records)
+        }
+      };  
+  
+      reader.onerror = function () {  
+        console.log('error is occured while reading file!');  
+      };  
+  
+    } else {  
+      alert("Please import valid .csv file.");  
+      this.fileReset();  
+    }  
+  }  
+  
+  getDataRecordsArrayFromCSVFile(csvRecordsArray: any, headerLength: any) {  
+    let csvArr = [];  
+  
+    for (let i = 1; i < csvRecordsArray.length; i++) {  
+      let curruntRecord = (<string>csvRecordsArray[i]).split(',');  
+      if (curruntRecord.length == headerLength) {  
+        let csvRecord: CSVRecord = new CSVRecord();  
+        csvRecord.first_name = curruntRecord[0].trim();  
+        csvRecord.last_name = curruntRecord[1].trim();  
+        csvRecord.user_email = curruntRecord[2].trim();  
+        csvRecord.user_age = curruntRecord[3].trim();  
+        csvArr.push(csvRecord);  
+      }  
+    }  
+    // console.log("CSVVVV"+ JSON.stringify(csvArr))
+    return csvArr;  
+  }  
+  
+  isValidCSVFile(file: any) {  
+    return file.name.endsWith(".csv");  
+  }  
+  
+  getHeaderArray(csvRecordsArr: any) {  
+    let headers = (<string>csvRecordsArr[0]).split(',');  
+    let headerArray = [];  
+    for (let j = 0; j < headers.length; j++) {  
+      headerArray.push(headers[j]);  
+    }  
+    return headerArray;  
+  }  
+  
+  fileReset() {  
+    this.csvReader.nativeElement.value = "";  
+    this.records = [];  
+  }  
+
+  importFile(records:any):any{
+    this.appService.uploadCSV(records).subscribe(
+      (data:any)=>{
+        this.toastr.success("Records Saved.")
+      },
+      (error:any)=>{
+        console.log("Error Occoured.");
+      }
+    )
+  }
+
 
 }
