@@ -48,6 +48,9 @@ export class AppService {
     return this.http.post(this.baseUrl + "/uploadcsv",fileValue)
   }
 
+  public getAllRecords():any{
+    return this.http.get(this.baseUrl +"/all")
+  }
   public getUserInfo = ()=>{
     return JSON.parse(localStorage.getItem("userInfo")||'{}');
   }

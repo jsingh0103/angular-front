@@ -11,22 +11,25 @@
   <div class="row" *ngIf="current_user">
       <h3><strong>Upload CSV file</strong></h3><input type="file" #csvReader name="Upload CSV" id="txtFileUpload" (change)="uploadListener($event)" accept=".csv" />    
   </div>
-  <table class="minimalistBlack" *ngIf="records.length > 0">    
-    <thead>    
-      <tr>    
-        <th>FirstName </th>    
-        <th>LastName </th>    
-        <th>Email</th>
-        <th>Age </th>    
-      </tr>    
-    </thead>      
-    <tbody>    
-      <tr *ngFor="let record of records;let i = index;">    
-        <td> <span>{{record.first_name}}</span> </td>    
-        <td> <span>{{record.last_name}}</span> </td>    
-        <td> <span>{{record.user_email}}</span> </td>    
-        <td> <span>{{record.user_age}}</span> </td>    
-      </tr>    
-    </tbody>    
-  </table>      
+  <div>
+    <table datatable  class="row-border hover" border="1px">
+      <thead style="background-color:lightgray;">
+        <tr>
+          <th>FirstName</th>
+          <th>LastName</th>
+          <th>Email</th>
+          <th>Age</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of userData">
+          <td>{{ data.first_name }}</td>
+          <td>{{ data.last_name }}</td>
+          <td>{{ data.user_email }}</td>
+          <td>{{ data.user_age}}</td>
+        </tr>
+      </tbody>
+
+    </table>
+  </div>
 </div>

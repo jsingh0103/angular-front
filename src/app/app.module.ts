@@ -11,6 +11,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { DataTablesModule } from 'angular-datatables';
+
 
 
 @NgModule({
@@ -24,6 +26,7 @@ import { ToastrModule } from 'ngx-toastr';
     HttpClientModule,
     CommonModule,
     BrowserAnimationsModule,
+    DataTablesModule,
     ToastrModule.forRoot(),
     RouterModule.forRoot([
       { path: 'login', component: LoginComponent,pathMatch: 'full'},

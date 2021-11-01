@@ -5,12 +5,18 @@ import { ActivatedRoute } from '@angular/router';
 import { Cookie } from 'ng2-cookies/ng2-cookies';
 import { CSVRecord } from './CSVModel'; 
 import { ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-user-view',
   templateUrl: './user-view.component.html',
   styleUrls: ['./user-view.component.css']
 })
 export class UserViewComponent implements OnInit {
+  
+  public datatableTitle = 'datatables';
+  public dtOptions: DataTables.Settings = {};
+  public userData:any;
+  
   public title = 'Angular7-readCSV';  
   public current_user:any;
 
@@ -20,21 +26,40 @@ export class UserViewComponent implements OnInit {
 
   ): void {
     if(Cookie.get("userId")){
-    let user_id = this._route.snapshot.paramMap.get('user_id');
+      let user_id = this._route.snapshot.paramMap.get('user_id');
 
-    this.appService.getCurrentRecord(user_id).subscribe(
-    (data:any)=>{
-      this.current_user = data
-    },
-    (error:any)=>{
-      console.log(error.errorMessage);
+      this.appService.getCurrentRecord(user_id).subscribe(
+      (data:any)=>{
+        this.current_user = data
+      },
+      (error:any)=>{
+        console.log(error.errorMessage);
+      })
+    }else{
+      this.router.navigate(["/login"])
     }
+
+    this.dtOptions = {
+      pagingType: 'full_numbers',
+      pageLength: 5,
+      processing: true
+    };
+    this.getAll()
+   
+  }
+  getAll(){
+    this.appService.getAllRecords().subscribe(
+      (data:any)=>{
+        this.userData = data
+      },
+      (error:any)=>{
+        console.log("An error occoured")
+      }
     )
-  }else{
-    this.router.navigate(["/login"])
+    
   }
 
-  }
+ ///pubload csv into database 
   public records: any[] = [];  
   @ViewChild('csvReader') csvReader: any;  
   
@@ -86,7 +111,6 @@ export class UserViewComponent implements OnInit {
         csvArr.push(csvRecord);  
       }  
     }  
-    // console.log("CSVVVV"+ JSON.stringify(csvArr))
     return csvArr;  
   }  
   
@@ -111,13 +135,16 @@ export class UserViewComponent implements OnInit {
   importFile(records:any):any{
     this.appService.uploadCSV(records).subscribe(
       (data:any)=>{
+        console.log("RECORDS"+data)
         this.toastr.success("Records Saved.")
+        this.getAll()
       },
       (error:any)=>{
         console.log("Error Occoured.");
       }
     )
   }
+  //upload csv ends here
 
 
 }
